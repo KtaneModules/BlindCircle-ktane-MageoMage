@@ -87,8 +87,8 @@ public class blindCircleScript : MonoBehaviour {
 						state = 3;
 					}
 				} else if (!modSolved){
-					GetComponent<KMBombModule>().HandleStrike();
 					Debug.LogFormat("[Blind Circle #{0}] Incorrect press made, module struck and resets", modId);
+					GetComponent<KMBombModule>().HandleStrike();
 					state = 1;
 					StartCoroutine(Reset());
 				}
