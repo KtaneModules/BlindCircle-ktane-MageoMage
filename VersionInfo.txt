@@ -1,0 +1,50 @@
+Version: 1.0.4
+
+Id: blindCircle
+Name: Blind Circle
+Creator: MageMage81
+Attributions: -
+
+Version Changelog:
+
+1.0.4:
+- added colorblind mode 
+- unsure whether it is on by default or not...
+
+1.0.3:
+- buttons play sound when the press is recognized
+	- that means no sound is played during transitions
+- Fixed animation bug when resetting
+- added a solve "animation"
+- removed a pesky index out of range after solving and pressing more buttons 
+
+1.0.2:
+- forgot to actually make the + and - go in the correct direction when turning counterclockwise
+- made it stop spinning after solve
+- made the color change entirely when done (because of speed it sometimes didn't change it to the final color, especially visible for previous color green)
+- some log formatting stuffs
+- made the circles have random starting rotations (but sequence is the same)
+
+1.0.1:
+- manual has been created
+- module can solve and strike now
+	- on strike it resets
+
+0.2.1:
+- after first press flash sequence is now happening
+- after flash sequence one wedge becomes visible
+
+0.1.1:
+- all assets been placed
+	- main frame from Big Circle
+	- changed text position & scale a bit
+	- added an additional colorblind text for flashes
+- reworked color change mechanism, so that I understand it and made slight adjustements
+	- multiple different algorithms to control various areas
+	- variable time
+
+0.0.1:
+- general template for all the modules
+- contains 2 basic Model Components:
+	- 1 parted entire part
+	- 2 parted with flat area and border/edge
