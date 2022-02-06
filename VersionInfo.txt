@@ -1,4 +1,4 @@
-Version: 1.0.4
+Version: 1.1.0
 
 Id: blindCircle
 Name: Blind Circle
@@ -6,6 +6,10 @@ Creator: MageMage81
 Attributions: -
 
 Version Changelog:
+
+1.1.0:
+- published to Steam Workshop
+- fixed some Logging typo regarding strikes
 
 1.0.4:
 - added colorblind mode 
