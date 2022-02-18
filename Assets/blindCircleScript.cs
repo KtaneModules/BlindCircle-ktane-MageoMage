@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using KModkit; //gets edgework and stuff
+using System.Text.RegularExpressions;
 
 public class blindCircleScript : MonoBehaviour {
 
@@ -64,7 +65,7 @@ public class blindCircleScript : MonoBehaviour {
 
 		switch(state){
 			case 0:
-				audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+				audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, wedge.transform);
 				Debug.LogFormat("[Blind Circle #{0}] Pressed {1} wedge", modId, wedge.GetComponentInChildren<TextMesh>().text);
 				Debug.LogFormat("[Blind Circle #{0}] Starting Flash Sequence", modId);
 				state = 1;
@@ -73,7 +74,7 @@ public class blindCircleScript : MonoBehaviour {
 				break;
 			
 			case 2:
-				audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
+				audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, wedge.transform);
 				Debug.LogFormat("[Blind Circle #{0}] Pressed {1} wedge", modId, wedge.GetComponentInChildren<TextMesh>().text);
 				if (!modSolved && Array.IndexOf(wedges, wedge) == goalSequence[presses]){
 					presses++;
@@ -111,8 +112,7 @@ public class blindCircleScript : MonoBehaviour {
 				StartCoroutine(InfoFade(wedgeClrs[6], 0.5f));
 			StartCoroutine(FadeAll(wedgeClrs[index], 0.5f, WedgeRenderers));
 			yield return StartCoroutine(FadeAll(wedgeClrs[index], 0.5f, MainRenderers));
-			if (colorblind)
-				StartCoroutine(InfoFade(new Color(wedgeClrs[8].r, wedgeClrs[8].g, wedgeClrs[8].b, 0), 0.5f));
+			StartCoroutine(InfoFade(new Color(wedgeClrs[8].r, wedgeClrs[8].g, wedgeClrs[8].b, 0), 0.5f));
 			StartCoroutine(FadeAll(wedgeClrs[8], 0.5f, WedgeRenderers));
 			yield return StartCoroutine(FadeAll(wedgeClrs[8], 0.5f, MainRenderers));
 		}
@@ -221,7 +221,7 @@ public class blindCircleScript : MonoBehaviour {
 		WedgeTextMeshes[index].color = textColor;
 	}
 
-	private IEnumerator InfoFade(Color newColor, float endTime) //Fades the Collorblind Text
+	private IEnumerator InfoFade(Color newColor, float endTime) //Fades the Colorblind Text for flashes
 	{
 		var startcolor = InfoText.color;
 		var startTime = Time.time;
@@ -345,4 +345,81 @@ public class blindCircleScript : MonoBehaviour {
 			yield return null;
 		} while (spin);
 	}
+
+	//twitch plays
+	#pragma warning disable 414
+	private readonly string TwitchHelpMessage = @"!{0} start [Presses any wedge in uncoloured form] | !{0} press <p1> (p2)... [Presses the wedge(s) in the specified position(s)] | !{0} colorblind [Toggles colorblind mode] | Valid positions are 1-8 going clockwise from the lit wedge";
+	#pragma warning restore 414
+	IEnumerator ProcessTwitchCommand(string command)
+	{
+		if (Regex.IsMatch(command, @"^\s*start\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+        {
+			yield return null;
+			if (state != 0)
+				yield return "sendtochaterror The module is not in its uncoloured form!";
+			else
+				wedges[UnityEngine.Random.Range(0, wedges.Length)].OnInteract();
+			yield break;
+        }
+		if (Regex.IsMatch(command, @"^\s*colorblind\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+		{
+			yield return null;
+			colorblind = !colorblind;
+			if (state == 2)
+            {
+				if (colorblind)
+					WedgeTextMeshes[lit].color = wedgeClrs[6];
+				else
+					WedgeTextMeshes[lit].color = new Color(wedgeClrs[8].r, wedgeClrs[8].g, wedgeClrs[8].b, 0);
+			}
+			yield break;
+		}
+		string[] parameters = command.Split(' ');
+		if (Regex.IsMatch(parameters[0], @"^\s*press\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+		{
+			yield return null;
+			if (state != 2)
+				yield return "sendtochaterror There is no lit wedge present!";
+			else if (parameters.Length == 1)
+				yield return "sendtochaterror Please specify the position(s) of the wedge(s) to press!";
+			else
+			{
+				for (int i = 1; i < parameters.Length; i++)
+				{
+					int temp = -1;
+					if (!int.TryParse(parameters[i], out temp))
+					{
+						yield return "sendtochaterror!f The specified position '" + parameters[i] + "' is invalid!";
+						yield break;
+					}
+					if (temp < 1 || temp > 8)
+					{
+						yield return "sendtochaterror The specified position '" + parameters[i] + "' is out of range 1-8!";
+						yield break;
+					}
+				}
+				for (int i = 1; i < parameters.Length; i++)
+				{
+					wedges[(lit + (int.Parse(parameters[i]) - 1)) % 8].OnInteract();
+					yield return new WaitForSeconds(0.1f);
+				}
+			}
+		}
+	}
+
+	IEnumerator TwitchHandleForcedSolve()
+    {
+		while (state == 1) yield return true;
+		if (state == 0)
+        {
+			wedges[UnityEngine.Random.Range(0, wedges.Length)].OnInteract();
+			while (state == 1) yield return true;
+		}
+		int start = presses;
+		for (int i = start; i < 3; i++)
+        {
+			wedges[goalSequence[i]].OnInteract();
+			yield return new WaitForSeconds(0.1f);
+		}
+    }
 }
