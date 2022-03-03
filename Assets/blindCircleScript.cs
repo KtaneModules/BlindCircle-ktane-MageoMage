@@ -66,8 +66,7 @@ public class blindCircleScript : MonoBehaviour {
 		switch(state){
 			case 0:
 				audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, wedge.transform);
-				Debug.LogFormat("[Blind Circle #{0}] Pressed {1} wedge", modId, wedge.GetComponentInChildren<TextMesh>().text);
-				Debug.LogFormat("[Blind Circle #{0}] Starting Flash Sequence", modId);
+				Debug.LogFormat("[Blind Circle #{0}] Pressed a wedge, starting flash sequence", modId);
 				state = 1;
 				StartCoroutine(Flash());
 				presses = 0;
@@ -75,7 +74,7 @@ public class blindCircleScript : MonoBehaviour {
 			
 			case 2:
 				audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, wedge.transform);
-				Debug.LogFormat("[Blind Circle #{0}] Pressed {1} wedge", modId, wedge.GetComponentInChildren<TextMesh>().text);
+				Debug.LogFormat("[Blind Circle #{0}] Pressed {1} wedge ({2} further clockwise)", modId, wedge.GetComponentInChildren<TextMesh>().text, (Array.IndexOf(wedges, wedge) - lit + 8)%8);
 				if (!modSolved && Array.IndexOf(wedges, wedge) == goalSequence[presses]){
 					presses++;
 					if (presses >= 3){
@@ -118,6 +117,7 @@ public class blindCircleScript : MonoBehaviour {
 		}
 		Debug.LogFormat("[Blind Circle #{0}] The flashes in order are: {1}, {2}, {3}", modId, NAMES[flashInd[0]], NAMES[flashInd[1]], NAMES[flashInd[2]]);
 		lit = UnityEngine.Random.Range(0,8);
+		Debug.LogFormat("[Blind Circle #{0}] The colored wedge is {1}.", modId, NAMES[lit]);
 		if (colorblind)
 			StartCoroutine(SegmentFade(wedgeClrs[lit], wedgeClrs[6], 1f, lit));
 		else
