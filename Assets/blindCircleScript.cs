@@ -348,7 +348,7 @@ public class blindCircleScript : MonoBehaviour {
 
 	//twitch plays
 	#pragma warning disable 414
-	private readonly string TwitchHelpMessage = @"!{0} start [Presses any wedge in uncoloured form] | !{0} press <p1> (p2)... [Presses the wedge(s) in the specified position(s)] | !{0} colorblind [Toggles colorblind mode] | Valid positions are 1-8 going clockwise from the lit wedge";
+	private readonly string TwitchHelpMessage = @"!{0} start [Presses any wedge in uncoloured form] | !{0} press <p1> (p2)... [Presses the wedge(s) in the specified position(s)] | !{0} colorblind [Toggles colorblind mode] | Valid positions are 0-7 going clockwise from the lit wedge";
 	#pragma warning restore 414
 	IEnumerator ProcessTwitchCommand(string command)
 	{
@@ -392,7 +392,7 @@ public class blindCircleScript : MonoBehaviour {
 						yield return "sendtochaterror!f The specified position '" + parameters[i] + "' is invalid!";
 						yield break;
 					}
-					if (temp < 1 || temp > 8)
+					if (temp < 0 || temp > 7)
 					{
 						yield return "sendtochaterror The specified position '" + parameters[i] + "' is out of range 1-8!";
 						yield break;
@@ -400,7 +400,7 @@ public class blindCircleScript : MonoBehaviour {
 				}
 				for (int i = 1; i < parameters.Length; i++)
 				{
-					wedges[(lit + (int.Parse(parameters[i]) - 1)) % 8].OnInteract();
+					wedges[(lit + (int.Parse(parameters[i]))) % 8].OnInteract();
 					yield return new WaitForSeconds(0.1f);
 				}
 			}
