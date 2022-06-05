@@ -394,7 +394,7 @@ public class blindCircleScript : MonoBehaviour {
 					}
 					if (temp < 0 || temp > 7)
 					{
-						yield return "sendtochaterror The specified position '" + parameters[i] + "' is out of range 1-8!";
+						yield return "sendtochaterror The specified position '" + parameters[i] + "' is out of range 0-7!";
 						yield break;
 					}
 				}
