@@ -1,4 +1,4 @@
-Version: 1.2.2
+Version: 1.2.3
 
 Id: blindCircle
 Name: Blind Circle
@@ -6,6 +6,9 @@ Creator: MageMage81
 Attributions: eXish (TP)
 
 Version Changelog:
+
+1.2.3:
+- fixed outdated Twitch Plays Error message
 
 1.2.2:
 - changed Twitch Plays press command
